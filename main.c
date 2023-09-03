@@ -132,7 +132,7 @@ void mostrarDatosLibro(Biblioteca biblioteca) //Función para mostrar los datos 
     //Se recorre la lista de libros hasta que coincidan los datos entregados con un libro de la lista, si coinciden,   se imprime.
     for (int i = 0 ; i < biblioteca.cantLibros ; i++)
     {
-        Libro* libro = &(biblioteca.libros[i]);
+        Libro* libro = &(biblioteca.libros[i]); //Dentro del bucle, esta línea declara un puntero libro que apunta al i-ésimo libro en la biblioteca. El operador & se usa para obtener la dirección de memoria del libro en la posición i
         if (strcmp(libro->titulo, tituloBuscado) == 0 && strcmp(libro->autor, autorLibro) == 0)
         {
             printf("Resultados del libro que busca:\n");
@@ -143,7 +143,7 @@ void mostrarDatosLibro(Biblioteca biblioteca) //Función para mostrar los datos 
             printf("Ubicación: %s\n", libro->ubicacion);
             printf("Estado: %s\n", libro->estado);
             
-            //Si la cola de reservas no está vacía, se imprime el nombre del estudiante más antiguo en la cola que             reservó el libro.
+            //Si la cola de reservas no está vacía, se imprime el nombre del estudiante más antiguo en la cola que reservó el libro.
             if (libro->colaReservas != NULL)
             {
                 printf("Reservas actuales:\n");
@@ -168,7 +168,7 @@ void mostrarTodosLosLibros(Biblioteca biblioteca)
 {
     if (biblioteca.cantLibros == 0)
     {
-        printf("No hay libros registrados en la biblioteca.\n");
+        printf("No hay libros registrados en la biblioteca.\n"); //Si el contador de la cantidad de libros se encuentra en 0, imprimir que no hay libros registrados.
         return;
     }
     printf("Lista de libros:\n");
@@ -201,7 +201,7 @@ void reservarLibro(Biblioteca *biblioteca)
     for (int i = 0; i < biblioteca->cantLibros; i++) 
     {
         Libro *libro = &biblioteca->libros[i];
-        if (strcmp(libro->titulo, tituloBuscado) == 0 && strcmp(libro->autor, autorLibro) == 0) 
+        if (strcmp(libro->titulo, tituloBuscado) == 0 && strcmp(libro->autor, autorLibro) == 0) //Se utiliza la función strcmp para comparar el título del libro (libro->titulo) con la cadena tituloBuscado y el autor del libro (libro->autor) con una cadena nb autorLibro.
         {
             //Si el titulo y autor coinciden con uno de la lista, se crea una nueva reserva.
             Reserva *nuevaReserva = malloc(sizeof(Reserva));
@@ -226,7 +226,7 @@ void reservarLibro(Biblioteca *biblioteca)
 void cancelarReservaLibro(Biblioteca *biblioteca)
 {
     char tituloBusqueda[51];
-    char autorBusqueda[51];
+    char autorBusqueda[51]; //se define tamaño de los arreglos de carácteres para almacenar el título, autor y nombre del estudiante 
     char nombreEstudiante[51];
     
     printf("Ingrese el título del libro: ");
@@ -253,7 +253,7 @@ void cancelarReservaLibro(Biblioteca *biblioteca)
                 //Se busca la reserva actual del libro.
                 while (reservaActual != NULL)
                 {
-                    if (strcmp(reservaActual->nombreEstudiante, nombreEstudiante) == 0)
+                    if (strcmp(reservaActual->nombreEstudiante, nombreEstudiante) == 0) //Se compara el nombre ingresado con el almacenado en la reserva.
                     {
                         //Se elimina la reserva si coincide el nombre usado al reservar.
                         if (reservaAnterior == NULL)
@@ -264,12 +264,12 @@ void cancelarReservaLibro(Biblioteca *biblioteca)
                         {
                             reservaAnterior->siguiente = reservaActual->siguiente;
                         }
-                        free(reservaActual);
+                        free(reservaActual); //Se libera la memoria de reservaActual
                         printf("Su reserva ha sido cancelada con éxito.\n");
                         return;
                     }
                     reservaAnterior = reservaActual;
-                    reservaActual = reservaActual->siguiente;
+                    reservaActual = reservaActual->siguiente; 
                 }
             }
             printf("No se encontró su reserva para este libro.\n");
@@ -302,17 +302,18 @@ void retirarLibro(Biblioteca *biblioteca)
         Libro *libro = &(biblioteca->libros[i]);
         if (strcmp(libro->titulo, tituloBusqueda) == 0 && strcmp(libro->autor, autorBusqueda) == 0)
         {
-            if (strcmp(libro->estado, "prestado") == 0 || (libro->colaReservas != NULL && strcmp(libro->colaReservas->frente->nombreEstudiante, nombreEstudiante) == 0))
+            if (strcmp(libro->estado, "prestado") == 0 || (libro->colaReservas != NULL && strcmp(libro->colaReservas->frente->nombreEstudiante, nombreEstudiante) == 0)) //Se verifica si el libro está prestado o si hay una cola de reservas y si el nombre del estudiante que desea retirar el libro coincide con el nombre del estudiante en la parte frontal de la cola de reservas.
             {
                 if (strcmp(libro->estado, "disponible") == 0)
-                {
+                {  //si el libro está disponble, se actualiza su estado a prestado.
                     strcpy(libro->estado, "prestado");
                 }
                 
                 if (libro->colaReservas != NULL)
                 {
-                    Reserva *nodoEliminar = libro->colaReservas->frente;
-                    libro->colaReservas->frente = libro->colaReservas->frente->siguiente;
+                    Reserva *nodoEliminar = libro->colaReservas->frente; 
+                    libro->colaReservas->frente = libro->colaReservas->frente->siguiente; // Si existen reservas se elimina la más antigua. Se actualiza el frente de la cola y se libera la memoria del nodoEliminar.
+        
                     free(nodoEliminar);
                 }
                 printf("Libro retirado con éxito.\n");
@@ -352,7 +353,7 @@ void devolverLibro(Biblioteca *biblioteca)
         if (strcmp(libro->titulo, tituloBusqueda) == 0 && strcmp(libro->autor, autorBusqueda) == 0)
         {
             if (strcmp(libro->estado, "prestado") == 0 || libro->colaReservas != NULL && strcmp(libro->colaReservas->frente->nombreEstudiante, nombreEstudiante) == 0)
-            {
+            {//Se verifica si el nombre y autor del libro corresponden a uno que haya sido registrado, de ser así, se cambia su estado prestado a disponible. Se elimina la reserva.
                 strcpy(libro->estado, "disponible");
                 Reserva *nodoEliminar = libro->colaReservas->frente;
                 libro->colaReservas->frente = libro->colaReservas->frente;
@@ -380,8 +381,8 @@ void mostrarLibrosPrestados(Biblioteca biblioteca)
         Libro *libro = &(biblioteca.libros[i]);
         if (strcmp(libro->estado, "prestado") == 0)
         {
-            librosPrestados++;
-            printf("- Título: %s, Autor: %s", libro->titulo, libro->autor);
+            librosPrestados++; //Se hace un contador que iterará una vez por cada libro que haya sido registrado, se buscan los libros que tengan estado "prestado" para aumentarc el contador librosPrestados.
+            printf("- Título: %s, Autor: %s", libro->titulo, libro->autor); 
             
             if (libro->colaReservas != NULL)
             {
@@ -410,6 +411,7 @@ int main()
   srand(time(NULL));
   Biblioteca biblioteca;
   biblioteca.cantLibros = 0;
+  //Dado un ingreso de número del usuario, entra en el switch y llama a la función correspondiente. Esto se detiene si el número ingresado es un 0.
   int opcion;
   do
     {
