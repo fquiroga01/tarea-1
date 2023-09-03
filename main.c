@@ -32,18 +32,18 @@ typedef struct
     int cantLibros;
 } Biblioteca;
 
-void enqueue(QueueReserva *cola, const char *nombreEstudiante) //función para agregar una reserva a la cola.
+void enqueue(QueueReserva *cola, const char *nombreEstudiante) //Función para agregar una reserva a la cola.
 {
-  Reserva *nuevaReserva = (Reserva *) malloc (sizeof(Reserva)); // creación de una nueva reserva.
+  Reserva *nuevaReserva = (Reserva *) malloc (sizeof(Reserva)); // Creación de una nueva reserva.
   if (nuevaReserva == NULL)
   {
     exit(EXIT_FAILURE);
   }
   strcpy(nuevaReserva->nombreEstudiante, nombreEstudiante);
-  nuevaReserva->siguiente = NULL; //se agrega el nombre del estudiante a la reserva.
+  nuevaReserva->siguiente = NULL; //Se agrega el nombre del estudiante a la reserva.
 
 
-  if (cola->final == NULL) //se actualiza la cola.
+  if (cola->final == NULL) //Se actualiza la cola.
   {
     cola->frente = nuevaReserva;
     cola->final = nuevaReserva;
@@ -55,7 +55,7 @@ void enqueue(QueueReserva *cola, const char *nombreEstudiante) //función para a
   }
 }
 
-QueueReserva *createQueue() //función para crear una cola de reservas vacías.
+QueueReserva *createQueue() //Función para crear una cola de reservas vacías.
 {
   QueueReserva *queue = (QueueReserva *)malloc(sizeof(QueueReserva));
   if (queue == NULL)
@@ -67,7 +67,7 @@ QueueReserva *createQueue() //función para crear una cola de reservas vacías.
   return queue;
 }
 
-void asignarUbicacionAleatoria(Libro *libro) //función para asignar un aubicación aleatoria al libro.
+void asignarUbicacionAleatoria(Libro *libro) //Función para asignar un aubicación aleatoria al libro.
 {
     int seccion = rand() % 4;
     int numero = rand() % 26;
@@ -75,7 +75,8 @@ void asignarUbicacionAleatoria(Libro *libro) //función para asignar un aubicaci
     sprintf(libro->ubicacion, "%c%d", seccionLetra, numero);
 }
 
-void registrarLibro(Biblioteca *biblioteca) //función para agregr un libro a la biblioteca.
+//Función para agregar un libro a la biblioteca. 
+void registrarLibro(Biblioteca *biblioteca)
 {
     if (biblioteca->cantLibros >= 100)
     {
@@ -90,8 +91,9 @@ void registrarLibro(Biblioteca *biblioteca) //función para agregr un libro a la
     nuevoLibro.titulo[strcspn(nuevoLibro.titulo, "\n")] = '\0';
 
     printf("Ingrese el autor de su libro: \n");
-    fgets(nuevoLibro.autor, sizeof(nuevoLibro.autor), stdin);
-    nuevoLibro.autor[strcspn(nuevoLibro.autor, "\n")] = '\0';
+    fgets(nuevoLibro.autor, sizeof(nuevoLibro.autor), stdin); //Se utiliza sizeof() para indicar el tamaño máximo de caracteres que se puede leer en la línea, para evitar desbordamientos de buffer.
+  
+    nuevoLibro.autor[strcspn(nuevoLibro.autor, "\n")] = '\0'; //Se elimina el salto de linea leido al ingresar datos por teclado
 
     printf("Ingrese el género de su libro: \n");
     fgets(nuevoLibro.genero, sizeof(nuevoLibro.genero), stdin);
@@ -104,15 +106,17 @@ void registrarLibro(Biblioteca *biblioteca) //función para agregr un libro a la
     strcpy(nuevoLibro.estado, "disponible");
     nuevoLibro.colaReservas = NULL;
 
+  //Se ingresan los datos de título, autor, género e ISBN del libro y se almacenan en nuevoLibro, se crea su estado y se define como disponible.
+  
     asignarUbicacionAleatoria(&nuevoLibro);
 
     biblioteca->libros[biblioteca->cantLibros] = nuevoLibro;
-    (biblioteca->cantLibros)++;
+    (biblioteca->cantLibros)++; //Se le asigna una ubicación al libro creado y se le suma uno al contador de cantidad de libros.
 
     printf("Se ha registrado su libro con éxito.\n");
 }
 
-void mostrarDatosLibro(Biblioteca biblioteca)
+void mostrarDatosLibro(Biblioteca biblioteca) //Función para mostrar los datos de un libro en específico (creado previamente).
 {
     char tituloBuscado[51];
     char autorLibro[51];
@@ -124,7 +128,8 @@ void mostrarDatosLibro(Biblioteca biblioteca)
     printf("Ingrese el autor de su libro buscado: ");
     fgets(autorLibro, sizeof(autorLibro), stdin);
     autorLibro[strcspn(autorLibro, "\n")] = '\0';
-    
+
+    //Se recorre la lista de libros hasta que coincidan los datos entregados con un libro de la lista, si coinciden,   se imprime.
     for (int i = 0 ; i < biblioteca.cantLibros ; i++)
     {
         Libro* libro = &(biblioteca.libros[i]);
@@ -138,6 +143,7 @@ void mostrarDatosLibro(Biblioteca biblioteca)
             printf("Ubicación: %s\n", libro->ubicacion);
             printf("Estado: %s\n", libro->estado);
             
+            //Si la cola de reservas no está vacía, se imprime el nombre del estudiante más antiguo en la cola que             reservó el libro.
             if (libro->colaReservas != NULL)
             {
                 printf("Reservas actuales:\n");
@@ -166,6 +172,7 @@ void mostrarTodosLosLibros(Biblioteca biblioteca)
         return;
     }
     printf("Lista de libros:\n");
+    //Se recorre la lista de libros y se muestra su título y su autor.
     for (int i = 0 ; i < biblioteca.cantLibros ; i++)
     {
         Libro* libro = &(biblioteca.libros[i]);
@@ -196,14 +203,17 @@ void reservarLibro(Biblioteca *biblioteca)
         Libro *libro = &biblioteca->libros[i];
         if (strcmp(libro->titulo, tituloBuscado) == 0 && strcmp(libro->autor, autorLibro) == 0) 
         {
+            //Si el titulo y autor coinciden con uno de la lista, se crea una nueva reserva.
             Reserva *nuevaReserva = malloc(sizeof(Reserva));
             strcpy(nuevaReserva->nombreEstudiante, nombreEstudiante);
 
+            //Se verifica si el libro tiene una cola de reservas, si no la tiene, se crea.
             if (libro->colaReservas == NULL) 
             {
                 libro->colaReservas = createQueue();
             }
 
+            //Se agrega la nueva reserva a la cola de reservas del libro.
             enqueue(libro->colaReservas, nuevaReserva);
 
             printf("Libro reservado con éxito para %s.\n", nombreEstudiante);
@@ -240,10 +250,12 @@ void cancelarReservaLibro(Biblioteca *biblioteca)
                 Reserva *reservaActual = libro->colaReservas->frente;
                 Reserva *reservaAnterior = NULL;
 
+                //Se busca la reserva actual del libro.
                 while (reservaActual != NULL)
                 {
                     if (strcmp(reservaActual->nombreEstudiante, nombreEstudiante) == 0)
                     {
+                        //Se elimina la reserva si coincide el nombre usado al reservar.
                         if (reservaAnterior == NULL)
                         {
                             libro->colaReservas->frente = reservaActual->siguiente;
@@ -393,7 +405,6 @@ void mostrarLibrosPrestados(Biblioteca biblioteca)
         printf("No hay libros prestados en este momento.\n");
     }
 }
-
 int main()
 {
   srand(time(NULL));
