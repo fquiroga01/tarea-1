@@ -22,7 +22,9 @@ Problemas conocidos:
 Contribuciones:
 
 Felipe Núñez (3/3):
-- Identificación y correción de problema con puntero dentro de las funciones Devolver/Retirar Un Libro.
+- Identificación y correción de problema con puntero dentro de las funciones Devolver/Retirar Un Libro. Sin la corrección no hubieran funcionado:
+  - Retirar
+  - Devolver
 - Comentarios en funciones.
 
 
