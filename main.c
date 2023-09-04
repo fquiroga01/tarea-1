@@ -226,7 +226,7 @@ void reservarLibro(Biblioteca *biblioteca)
 void cancelarReservaLibro(Biblioteca *biblioteca)
 {
     char tituloBusqueda[51];
-    char autorBusqueda[51]; //se define tamaño de los arreglos de carácteres para almacenar el título, autor y nombre del estudiante 
+    char autorBusqueda[51]; //Se define tamaño de los arreglos de carácteres para almacenar el título, autor y nombre del estudiante 
     char nombreEstudiante[51];
     
     printf("Ingrese el título del libro: ");
@@ -408,9 +408,10 @@ void mostrarLibrosPrestados(Biblioteca biblioteca)
 }
 int main()
 {
-  srand(time(NULL));
+  srand(time(NULL)); //Se inicia el generador de números aleatorios (rand) que es usado para buscar ubicaciones aleatorias para el almacenamiento de los libros.
   Biblioteca biblioteca;
-  biblioteca.cantLibros = 0;
+  biblioteca.cantLibros = 0; //Se inica el contador de la cantidad de libros en 0.
+  
   //Dado un ingreso de número del usuario, entra en el switch y llama a la función correspondiente. Esto se detiene si el número ingresado es un 0.
   int opcion;
   do
